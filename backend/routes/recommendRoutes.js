@@ -1,8 +1,9 @@
 import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
-import { getRecommendations } from "../controllers/recommendController.js";
+import getRecommendations from "../controllers/getRecommendations.js";
+
 const router = express.Router();
 
-router.post("/", protect, getRecommendations);
+// POST /api/v1/recommendations
+router.post("/", getRecommendations);
 
 export default router;

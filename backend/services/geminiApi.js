@@ -1,10 +1,11 @@
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function getGeminiRecommendations(preferences) {
-
-const prompt = `
+  const prompt = `
 You are Nexa, an expert AI travel planner.
 
 GOAL
@@ -16,8 +17,8 @@ Produce a FRONT VIEW response in three parts for the given user inputs:
 USER INPUTS
 - LOCATION: ${preferences.location}          
 - NUM_PEOPLE:  ${preferences.numPeople}
-- PRICE_RANGE: ${preferences.budget }     // one of ["budget","mid","luxury"]
-- DAYS:  ${preferences.days}                  // integer total trip days
+- PRICE_RANGE: ${preferences.budget}     
+- DAYS:  ${preferences.days}                  
 
 SCOPING & GRANULARITY RULES
 - If LOCATION is a country/large region → pick cities/regions within it.
@@ -84,7 +85,7 @@ OUTPUT FORMAT (STRICT JSON ONLY; NO EXTRA TEXT)
 }
 
 CONSISTENCY RULES
-- Return EXACTLY 10 items in top_places (or fewer ONLY if truly impossible; then explain in meta.assumptions.notes).
+- Return EXACTLY 5 items in top_places (or fewer ONLY if truly impossible; then explain in meta.assumptions.notes).
 - Keep text crisp and scannable; avoid long paragraphs.
 - No hotels or booking links; focus on places/experiences.
 - Prefer a mix of famed highlights and 20–30% hidden gems.
@@ -99,60 +100,41 @@ OUTPUT STRICTNESS
 - Output only JSON per the schema above. No markdown, no commentary, no trailing commas.
 `;
 
-
   try {
     const response = await axios.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
       {
         contents: [
           {
             role: "user",
             parts: [{ text: prompt }],
-          }
-        ]
+          },
+        ],
       },
       {
         params: { key: GEMINI_API_KEY },
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       }
     );
 
-    // Gemini Pro returns strict JSON as a string (per your output requirements)
-   const raw = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const raw = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
 
-
-
-
-    // --- Updated extraction logic for full JSON ---
-    // Try to extract a JSON object from raw string.
     const jsonMatch = raw?.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Gemini did not return a valid JSON object. Raw:\n" + raw);
+    if (!jsonMatch)
+      throw new Error(
+        "Gemini did not return a valid JSON object. Raw:\n" + raw
+      );
     const result = JSON.parse(jsonMatch);
 
-    // result: { meta, top_places: [...], budget_stretch_advisor: {...}, budget_cut_optimizer: {...} }
     return result;
   } catch (err) {
-    console.error("Gemini API error:", err.response?.data || err.message);
-    // Optional: fallback
-    return {
-      meta: { location_scope: "city", assumptions: { price_range: preferences.budget, currency_code: "USD", notes: "Fallback data due to error" } },
-      top_places: [
-        {
-          id: "city-center",
-          name: "City Center",
-          scope_type: "city",
-          short_reason: "Main sights of the city.",
-          primary_vibes: ["culture"],
-          ideal_duration: "1 day",
-          fit_score: 80,
-          est_daily_cost_per_person: { min: 20, max: 40 },
-          best_months: ["Jan", "Feb"],
-          image_search_query: "City Center landmark",
-          map_hint: preferences.location
-        }
-      ],
-      budget_stretch_advisor: { recommended_increase: "+10%", why_it_matters: "Sample upgrade", upgrades: [] },
-      budget_cut_optimizer: { target_savings: "save 10%", principle: "Sample swap", swaps: [] }
-    };
+    console.error("Error in getGeminiRecommendations:", err);
+
+    let errorMessage = err.message || "Unknown error";
+    if (err.response && err.response.data) {
+      errorMessage += " | Gemini says: " + JSON.stringify(err.response.data);
+    }
+
+    throw new Error(errorMessage);
   }
 }

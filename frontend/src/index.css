@@ -1,2 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Chillax';
+  font-style: normal;
+  font-weight: 700;
+  src: url('./assets/Chillax_Complete/Fonts/WEB/Chillax-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Chillax';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./assets/Chillax_Complete/Fonts/WEB/Chillax-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+

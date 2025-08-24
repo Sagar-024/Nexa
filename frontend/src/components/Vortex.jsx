@@ -2,14 +2,14 @@ import React, { useEffect, useRef } from "react";
 import { createNoise3D } from "simplex-noise";
 import { motion } from "@motionone/react";
 
-
-// Usage: <Vortex height="100vh">...</Vortex>  or  <Vortex height="64px">navbar here</Vortex>
+// Usage: <Vortex> ...content... </Vortex>
 const Vortex = (props) => {
   const canvasRef = useRef(null);
-  const containerRef = useRef(null);
+  const contentRef = useRef(null);
   const animationFrameId = useRef();
+  const previousContentHeight = useRef(0);
 
-  // Default, but can be overridden by props
+  // Particle config
   const particleCount = props.particleCount || 120;
   const particlePropCount = 9;
   const particlePropsLength = particleCount * particlePropCount;
@@ -34,12 +34,34 @@ const Vortex = (props) => {
   };
   const lerp = (n1, n2, speed) => (1 - speed) * n1 + speed * n2;
 
+  // Resize canvas to match content height every frame!
+  const resizeCanvasToContent = () => {
+    const canvas = canvasRef.current;
+    const content = contentRef.current;
+    if (canvas && content) {
+      const pxWidth = content.offsetWidth || window.innerWidth;
+      // ✅ use scrollHeight instead of offsetHeight
+      const pxHeight = content.scrollHeight || window.innerHeight;
+      if (
+        canvas.width !== pxWidth ||
+        canvas.height !== pxHeight ||
+        previousContentHeight.current !== pxHeight
+      ) {
+        canvas.width = pxWidth;
+        canvas.height = pxHeight;
+        center[0] = 0.5 * canvas.width;
+        center[1] = 0.5 * canvas.height;
+        previousContentHeight.current = pxHeight;
+      }
+    }
+  };
+
   const setup = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        resize(canvas);
+        resizeCanvasToContent();
         initParticles();
         draw(canvas, ctx);
       }
@@ -65,11 +87,12 @@ const Vortex = (props) => {
     let ttl = baseTTL + rand(rangeTTL);
     let speed = baseSpeed + rand(rangeSpeed);
     let radius = baseRadius + rand(rangeRadius);
-    // hue ignored, always white
     particleProps.set([x, y, vx, vy, life, ttl, speed, radius, 0], i);
   };
 
+  // On every frame, check if content height changed, then redraw
   const draw = (canvas, ctx) => {
+    resizeCanvasToContent();
     tick++;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = backgroundColor;
@@ -125,7 +148,6 @@ const Vortex = (props) => {
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineWidth = radius;
-    // Force crisp white
     ctx.strokeStyle = `rgba(255,255,255,${fadeInOut(life, ttl)})`;
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -139,71 +161,54 @@ const Vortex = (props) => {
     return x > canvas.width || x < 0 || y > canvas.height || y < 0;
   };
 
-  // Now height is flexible!
-  const resize = (canvas) => {
-    const parent = canvas.parentElement;
-    // Try prop.height, fallback to default
-    let h = props.height || props.h || "100vh";
-    // If a string like '64px', parseInt finds 64
-    let pxHeight =
-      typeof h === "number"
-        ? h
-        : parseInt(h) && h.includes("px")
-        ? parseInt(h)
-        : window.innerHeight;
-
-    canvas.width = window.innerWidth;
-    canvas.height = pxHeight;
-    center[0] = 0.5 * canvas.width;
-    center[1] = 0.5 * canvas.height;
-    if (parent) parent.style.height = `${pxHeight}px`;
-  };
-
-  const handleResize = () => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      resize(canvas);
-    }
-  };
-
   useEffect(() => {
     setup();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", resizeCanvasToContent);
     return () => {
-      window.removeEventListener("resize", handleResize);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      window.removeEventListener("resize", resizeCanvasToContent);
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
     };
     // eslint-disable-next-line
-  }, [props.height, props.h]);
+  }, []);
 
-  // Use height prop for main wrapper
+  // ✅ removed overflow hidden so scrolling works
   const containerStyle = {
     position: "relative",
     width: "100%",
-    height: props.height || props.h || "100vh",
-    overflow: "hidden",
+    ...props.style,
   };
 
   return (
     <div style={containerStyle} className={props.className || ""}>
+      {/* Absolutely filled canvas bg */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        ref={containerRef}
         style={{
           position: "absolute",
-          inset: 0,
+          top: 0,
+          left: 0,
+          right: 0,
+          // ✅ height follows content
+          height: contentRef.current?.scrollHeight || "100%",
           zIndex: 0,
-          height: "100%",
-          width: "100%",
           background: "transparent",
+          pointerEvents: "none",
         }}
       >
-        <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} />
+        <canvas
+          ref={canvasRef}
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "block",
+            pointerEvents: "none",
+          }}
+        />
       </motion.div>
-      <div style={{ position: "relative", zIndex: 10, width: "100%", height: "100%" }}>
+
+      {/* Content (div like, grows forever) */}
+      <div ref={contentRef} style={{ position: "relative", zIndex: 10, width: "100%" }}>
         {props.children}
       </div>
     </div>

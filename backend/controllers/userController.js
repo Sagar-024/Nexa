@@ -1,8 +1,8 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
+import User from '../Db/model/User.js'
 
 
- const getMe = async (req, res) => {
+
+ export  const getMe = async (req, res) => {
 
   res.json({
     id: req.user._id,
