@@ -1,30 +1,27 @@
-
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import preferencesReducer from "./slices/preferencesSlice.js";
+import recommendationReducer from "./slices/recommendationSlice.js"; 
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import recommendationReducer from "./slices/recommendationSlice";
 
-
-const persistConfig = {
-  key: "root",
+// Persist config for both slices, but you may want separate configs for each
+const preferencesPersistConfig = {
+  key: "preferences",
   storage,
-  whitelist: ["recommendation"], 
+};
+const recommendationPersistConfig = {
+  key: "recommendation",
+  storage,
 };
 
-const rootReducer = combineReducers({
-  recommendation: recommendationReducer,
-  
-});
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
+const persistedPreferencesReducer = persistReducer(preferencesPersistConfig, preferencesReducer);
+const persistedRecommendationReducer = persistReducer(recommendationPersistConfig, recommendationReducer);
 
 export const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false, 
-    }),
+  reducer: {
+    preferences: persistedPreferencesReducer,
+    recommendation: persistedRecommendationReducer, // <-- now in store
+  },
 });
 
 export const persistor = persistStore(store);

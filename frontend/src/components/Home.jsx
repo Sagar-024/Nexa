@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
-import Vortex from "./Vortex.jsx";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setPreferences, clearPreferences } from "../slices/preferencesSlice.js";
 
-
+// Options arrays
 const dayOptions = ["One Day", "Two Days", "Three Days", "Week", "Many Weeks", "One Month"];
 const peopleOptions = [
   "Solo", "Couple", "Small Group (3-5)", "Medium Group (6-10)", "Large Group (10+)"
@@ -28,19 +29,27 @@ export default function Home() {
   const [open, setOpen] = useState({ days: false, people: false, price: false });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  
   const handleSearch = async () => {
     setLoading(true);
-    const preferences = {
-      location: pref.destination,   // ✅ Fixed param name!
-      days: pref.days,
-      numPeople: pref.people,       // ✅ Fixed param name!
-      budget: pref.price            // ✅ Fixed param name!
-    };
-    const prefKey = JSON.stringify(preferences);
 
-   
+    // 1. Clear old prefs, prevent caching issues!
+    dispatch(clearPreferences());
+
+    // 2. Build new preferences object
+    const preferences = {
+      location: pref.destination,
+      days: pref.days,
+      numPeople: pref.people,
+      budget: pref.price
+    };
+
+    // 3. Save to Redux (persistent)
+    dispatch(setPreferences(preferences));
+
+    // 4. Also pass via router to loader (if needed downstream)
+    const prefKey = JSON.stringify(preferences);
     navigate("/loader", { state: { prefKey, preferences } });
     setLoading(false);
   };
@@ -49,11 +58,17 @@ export default function Home() {
     <div className="relative min-h-screen bg-black text-white flex flex-col w-full px-4">
       <main className="flex-1 w-full flex flex-col items-center pt-16 pb-16 px-3 md:px-20">
         <div className="w-full max-w-2xl mb-10 font-chillax mx-auto">
-          <h1 className="text-5xl font-bold mb-2 text-white" style={{
-            fontFamily: "'Stardos Stencil', 'Inter', sans-serif",
-            fontWeight: 700
-          }}>
-            Plan your <span className="text-5xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent">dream trip</span>
+          <h1
+            className="text-5xl font-bold mb-2 text-white"
+            style={{
+              fontFamily: "'Stardos Stencil', 'Inter', sans-serif",
+              fontWeight: 700
+            }}
+          >
+            Plan your{" "}
+            <span className="text-5xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+              dream trip
+            </span>
           </h1>
           <div className="text-sm text-gray-400 mb-3">
             Enter destination, days, people, and budget to get custom recommendations.
@@ -80,8 +95,7 @@ export default function Home() {
                 {/* Days Dropdown */}
                 <div className="relative flex-1">
                   <button
-                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between 
-                    border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
+                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
                     onClick={() => setOpen(o => ({ ...o, days: !o.days }))}
                     type="button"
                   >
@@ -104,8 +118,7 @@ export default function Home() {
                 {/* People Dropdown */}
                 <div className="relative flex-1">
                   <button
-                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between 
-                    border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
+                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
                     onClick={() => setOpen(o => ({ ...o, people: !o.people }))}
                     type="button"
                   >
@@ -128,8 +141,7 @@ export default function Home() {
                 {/* Price Dropdown */}
                 <div className="relative flex-1">
                   <button
-                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between 
-                    border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
+                    className="w-full bg-[#23232a] py-2 px-4 text-left rounded-xl text-gray-300 flex items-center justify-between border border-[#e5e5e5] focus:border-blue-500 transition cursor-pointer hover:border-blue-400 active:scale-95"
                     onClick={() => setOpen(o => ({ ...o, price: !o.price }))}
                     type="button"
                   >
