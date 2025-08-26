@@ -1,5 +1,5 @@
 import { getGeminiRecommendations } from "../services/geminiApi.js";
-import { fetchUnsplashImage } from "../services/unsplashApi.js";
+import { fetchPixabayImage } from "../services/fetchPixabayImage.js";
 import dotenv from 'dotenv'
 dotenv.config()
 
