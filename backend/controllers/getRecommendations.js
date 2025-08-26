@@ -15,7 +15,7 @@ const getRecommendations = async (req, res) => {
     const placesWithImages = await Promise.all(
       (geminiObj.top_places || []).map(async (place) => ({
         ...place,
-        image: await fetchUnsplashImage(
+        image: await fetchPixabayImage(
           place.image_search_query || place.name,
           place.category
         )
