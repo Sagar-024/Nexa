@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+ "scripts": {
+  "dev": "vite --host",
+  "build": "vite build",
+  "preview": "vite preview",
+  "lint": "eslint ."
+},
+
   "dependencies": {
     "@motionone/react": "^10.16.4",
     "@reduxjs/toolkit": "^2.8.2",
