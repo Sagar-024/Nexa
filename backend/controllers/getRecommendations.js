@@ -1,5 +1,5 @@
 import { getGeminiRecommendations } from "../services/geminiApi.js";
-import { fetchPixabayImage } from "../services/fetchPixabayImage.js";
+import { fetchUnsplashImage } from "../services/unsplashApi.js";
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -15,7 +15,7 @@ const getRecommendations = async (req, res) => {
     const placesWithImages = await Promise.all(
       (geminiObj.top_places || []).map(async (place) => ({
         ...place,
-        image: await fetchPixabayImage(
+        image: await fetchUnsplashImage(
           place.image_search_query || place.name,
           place.category
         )

@@ -29,7 +29,7 @@ export default function LoaderPage() {
     }
     let isMounted = true;
     let start = Date.now();
-    let minLoaderTime = 8; // seconds, less is better for real apps
+    let minLoaderTime = 8; 
 
     // Step 1
     setActiveStep(0);
