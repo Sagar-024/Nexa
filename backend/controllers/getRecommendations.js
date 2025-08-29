@@ -1,41 +1,39 @@
 import { getGeminiRecommendations } from "../services/geminiApi.js";
-import { fetchUnsplashImage } from "../services/unsplashApi.js";
-import dotenv from 'dotenv'
-dotenv.config()
+import { fetchPixabayImages } from "../services/pixabayApi.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const getRecommendations = async (req, res) => {
   try {
     const preferences = req.body.preferences;
 
-    // 1. Get result from Gemini (structured object)
-    
+    // Get places from Gemini
     const geminiObj = await getGeminiRecommendations(preferences);
 
-    // 2. Get Unsplash image for each top place
+    // Get images from Pixabay for each place
     const placesWithImages = await Promise.all(
       (geminiObj.top_places || []).map(async (place) => ({
         ...place,
-        image: await fetchUnsplashImage(
+        image: await fetchPixabayImages(
           place.image_search_query || place.name,
-          place.category
-        )
+          1
+        ).then((images) => images[0]), // get the first image from array
       }))
     );
 
-    // 3. Compose response
+    // Compose response
     const result = {
       ...geminiObj,
-      top_places: placesWithImages
+      top_places: placesWithImages,
     };
 
     res.json(result);
-
   } catch (err) {
     console.error("Error in getRecommendations:", err);
 
     let errorMessage = err.message || "Unknown error";
     if (err.response && err.response.data) {
-      errorMessage += ' | Gemini says: ' + JSON.stringify(err.response.data);
+      errorMessage += " | Gemini says: " + JSON.stringify(err.response.data);
     }
 
     res.status(500).json({ error: errorMessage });

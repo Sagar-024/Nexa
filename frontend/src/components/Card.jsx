@@ -19,7 +19,6 @@ function Card({ place }) {
         <div className="absolute top-2 right-2 bg-black/60 px-3 py-1 rounded-xl text-xs text-white font-mono tracking-wide">
           {place.best_months?.slice(0, 2).join(", ") || ""}
         </div>
-       
         <div className="absolute inset-0 pointer-events-none group-hover:bg-gradient-to-t from-blue-900/30 to-transparent transition rounded-2xl" />
       </div>
       <div className="p-4 flex flex-col flex-1 justify-between">
@@ -32,7 +31,27 @@ function Card({ place }) {
           <div className="text-xs text-gray-400 mb-2 truncate">
             {place.short_reason}
           </div>
-        
+
+          {/* New: Pixabay attribution and tags */}
+          {place.image && (
+            <div className="text-xs text-gray-400 mb-2 flex flex-col gap-1">
+              <span>
+                📸 By&nbsp;
+                <a
+                  href={place.image.photographerProfile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sky-300 underline hover:text-pink-300"
+                >
+                  {place.image.photographer}
+                </a>
+              </span>
+              <span>
+                <span className="text-gray-500">Tags:</span> {place.image.description}
+              </span>
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-1 mb-2">
             {(place.primary_vibes || []).map((vibe) => (
               <span
