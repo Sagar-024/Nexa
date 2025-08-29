@@ -85,7 +85,7 @@ OUTPUT FORMAT (STRICT JSON ONLY; NO EXTRA TEXT)
 }
 
 CONSISTENCY RULES
-- Return EXACTLY 5 items in top_places (or fewer ONLY if truly impossible; then explain in meta.assumptions.notes).
+- Return EXACTLY 10 items in top_places (or fewer ONLY if truly impossible; then explain in meta.assumptions.notes).
 - Keep text crisp and scannable; avoid long paragraphs.
 - No hotels or booking links; focus on places/experiences.
 - Prefer a mix of famed highlights and 20–30% hidden gems.
