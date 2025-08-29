@@ -16,7 +16,7 @@ const getRecommendations = async (req, res) => {
         ...place,
         image: await fetchPixabayImages(
           place.image_search_query || place.name,
-          1
+          3
         ).then((images) => images[0]), // get the first image from array
       }))
     );
