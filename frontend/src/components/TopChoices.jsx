@@ -42,7 +42,7 @@ function TopChoices() {
 
   return (
     <div className="w-full min-h-screen bg-black">
-      <div className="flex flex-col items-center gap-10 pt-8 pb-16 px-2 sm:px-4">
+      <div className="flex flex-col items-center gap-16 pt-8 pb-20 px-2 sm:px-5">
         <section className="w-full">
           <h2
             className="font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl tracking-tight drop-shadow-md mb-2 text-center"
@@ -54,7 +54,7 @@ function TopChoices() {
             <span className="text-3xl text-white">In</span> {capitalize(userLocation)}
           </h2>
           <h2
-            className="text-3xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl mb-8 tracking-tight drop-shadow-md text-center"
+            className="text-3xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl mb-10 tracking-tight drop-shadow-md text-center"
             style={{
               fontFamily: "'Stardos Stencil', 'Inter', sans-serif",
               fontWeight: 700
@@ -63,7 +63,7 @@ function TopChoices() {
             <span className="text-3xl text-white"> Top Choices for </span> Your Trip
           </h2>
 
-          <div className="w-full flex flex-col items-center gap-10">
+          <div className="w-full flex flex-col items-center gap-16 px-5">
             {recommendation.top_places.map((place) => (
               <Card key={place.id} place={place} />
             ))}
@@ -72,7 +72,7 @@ function TopChoices() {
 
         {/* Budget Stretch Upgrades Card */}
         {recommendation.budget_stretch_advisor && (
-          <section className="bg-white/5 backdrop-blur-md border border-purple-600/20 rounded-2xl shadow-lg mx-auto mt-10 max-w-[420px] w-full p-5 flex flex-col gap-4 transition-all">
+          <section className="bg-neutral-900 border border-purple-600/20 rounded-2xl shadow-xl mx-auto mt-10 max-w-[420px] w-full p-6 flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-pink-400 text-xl">🌟</span>
               <h3 className="font-bold text-lg sm:text-xl text-white drop-shadow">Budget Stretch Upgrades</h3>
@@ -83,13 +83,13 @@ function TopChoices() {
               </span>
               <span> &middot; {recommendation.budget_stretch_advisor.why_it_matters}</span>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {(recommendation.budget_stretch_advisor.upgrades || []).map((upg) => (
                 <div
                   key={upg.title}
-                  className="bg-[#222230]/70 border border-pink-300/20 rounded-xl shadow-sm p-4 flex flex-col gap-1 hover:shadow-lg transition-all"
+                  className="bg-black/60 border border-pink-300/20 rounded-xl shadow p-4 flex flex-col gap-1"
                 >
-                  <div className="font-semibold text-pink-200 text-base flex items-center">
+                  <div className="font-semibold text-pink-200 text-base">
                     ✚ {upg.title}
                   </div>
                   <div className="text-yellow-400 font-medium">{upg.extra_cost_per_person}</div>
@@ -102,7 +102,7 @@ function TopChoices() {
 
         {/* Budget Cut Optimizer Card */}
         {recommendation.budget_cut_optimizer && (
-          <section className="bg-white/5 backdrop-blur-md border border-green-500/15 rounded-2xl shadow-lg mx-auto mt-5 max-w-[420px] w-full p-5 flex flex-col gap-4 transition-all">
+          <section className="bg-neutral-900 border border-green-500/20 rounded-2xl shadow-xl mx-auto mt-8 max-w-[420px] w-full p-6 flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-green-400 text-xl">✂️</span>
               <h3 className="font-bold text-lg sm:text-xl text-white drop-shadow">Budget Cut Optimizer</h3>
@@ -113,11 +113,11 @@ function TopChoices() {
               </span>
               <span> &middot; {recommendation.budget_cut_optimizer.principle}</span>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {(recommendation.budget_cut_optimizer.swaps || []).map((swap, i) => (
                 <div
                   key={swap.replace + swap.with + i}
-                  className="bg-[#1a2a1e]/80 border border-green-300/20 rounded-xl shadow-sm p-4 flex flex-col gap-1 hover:shadow-lg transition-all"
+                  className="bg-black/60 border border-green-300/20 rounded-xl shadow p-4 flex flex-col gap-1"
                 >
                   <div className="text-xs">
                     <span className="line-through text-red-300 mr-2">{swap.replace}</span>
