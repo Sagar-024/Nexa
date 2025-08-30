@@ -42,19 +42,19 @@ function TopChoices() {
 
   return (
     <div className="w-full min-h-screen bg-black">
-      <div className="flex flex-col items-center gap-16 pt-8 pb-20 px-2 sm:px-5">
+      <div className="flex flex-col items-center gap-16 pt-8 pb-20 px-1 sm:px-5">
         <section className="w-full">
           <h2
-            className="font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl tracking-tight drop-shadow-md mb-2 text-center"
+            className="font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl tracking-tight drop-shadow-md mb-2 ml-4  text-3xl"
             style={{
               fontFamily: "'Stardos Stencil', 'Inter', sans-serif",
               fontWeight: 700
             }}
           >
-            <span className="text-3xl text-white">In</span> {capitalize(userLocation)}
+            <span className="text-white" >In</span   > {capitalize(userLocation)}
           </h2>
           <h2
-            className="text-3xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl mb-10 tracking-tight drop-shadow-md text-center"
+            className="text-3xl font-extrabold bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 bg-clip-text text-transparent sm:text-3xl md:text-4xl mb-13 tracking-tight drop-shadow-md  ml-4"
             style={{
               fontFamily: "'Stardos Stencil', 'Inter', sans-serif",
               fontWeight: 700

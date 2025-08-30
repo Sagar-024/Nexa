@@ -36,27 +36,23 @@ export default function LoaderPage() {
 
     setTimeout(() => isMounted && setActiveStep(1), 200);
 
-    setTimeout(async () => {
+        setTimeout(async () => {
       isMounted && setActiveStep(2);
 
       try {
-       
+        
+        // For backward compatibility, still get the full recommendation
         const response = await axios.post(
-         "https://nexa-5.onrender.com/api/v1/recommendations",
+         "http://localhost:5000/api/v1/recommendations",
           { preferences }
         );
         console.log("API POST preferences:", preferences, "Response:", response.data, "prefKey:", prefKey);
 
-
         if (!isMounted) return;
 
-       
         setLocalRecommendation(response.data);
-
-        
         setActiveStep(3);
 
-        
         setTimeout(() => {
           if (isMounted) {
             dispatch(
@@ -69,7 +65,6 @@ export default function LoaderPage() {
           }
         }, 600);
 
-       
         const elapsed = (Date.now() - start) / 1000;
         const remaining = Math.max(minLoaderTime - elapsed, 0);
 
