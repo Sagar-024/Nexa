@@ -44,7 +44,7 @@ This project is the result of:
 ## Try DreamTrip
 
 **Frontend (React, Vite, Tailwind)**  
-[Live on Netlify](https://dreamtrip0024.netlify.app/)
+[Live on Netlify](https://nexa0ai.netlify.app/)
 
 
 
