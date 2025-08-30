@@ -43,7 +43,7 @@ export default function LoaderPage() {
         
         // For backward compatibility, still get the full recommendation
         const response = await axios.post(
-         "http://localhost:5000/api/v1/recommendations",
+         "https://nexa-5.onrender.com/api/v1/recommendations",
           { preferences }
         );
         console.log("API POST preferences:", preferences, "Response:", response.data, "prefKey:", prefKey);
